@@ -89,12 +89,48 @@ public class FormController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("emailnovo", emailNovo);
-        response.put("senhas iguais? ", senhasIguais);
-        response.put("campo de senha vazio? ", senhaVazia);
-        response.put("campo usuario vazio? ", usuarioVazio);
-        response.put("campo hashtag vazio? ", hashtagVazia);
+        response.put("usuarioVazio", usuarioVazio);
+        response.put("hashtagVazio", hashtagVazia);
+        response.put("senhaVazio", senhaVazia);
+        response.put("senhasIguais", senhasIguais);
+
 
         return ResponseEntity.ok(response);
+
+
+    }
+
+    @GetMapping("/verificarLogin")
+    public String VerificarDadosLogin(@RequestParam String email,
+                                                                   @RequestParam String senha) {
+
+        String sqlEmail = "SELECT COUNT(*) FROM credenciais WHERE email = ?";
+        int countEmail = jdbcTemplate.queryForObject(sqlEmail, Integer.class, email);
+
+        String sqlSenha = "SELECT COUNT(*) FROM credenciais WHERE email = ? and senha = ?";
+        int countSenha = jdbcTemplate.queryForObject(sqlSenha, Integer.class, email, senha);
+
+        System.out.println(countSenha);
+
+        boolean emailRegistrado = false;
+        boolean senhaValida = false;
+
+        if (countEmail > 0) {
+            emailRegistrado = true;
+        }
+
+        if (countSenha > 0) {
+            senhaValida = true;
+        }
+
+
+        if(emailRegistrado && senhaValida) {
+            return "redirect:http://localhost:3000/home";
+        }
+
+        return "redirect:http://localhost:3000/";
+
+
 
 
     }
