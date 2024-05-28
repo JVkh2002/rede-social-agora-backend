@@ -3,6 +3,7 @@ package dio.springbootweb.controller;
 import dio.springbootweb.model.Credenciais;
 import dio.springbootweb.repository.CredenciaisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -100,8 +102,8 @@ public class FormController {
 
     }
 
-    @GetMapping("/verificarLogin")
-    public String VerificarDadosLogin(@RequestParam String email,
+    @PostMapping ("/verificarLogin")
+    public ResponseEntity<Map<String, Object>> VerificarDadosLogin(@RequestParam String email,
                                                                    @RequestParam String senha) {
 
         String sqlEmail = "SELECT COUNT(*) FROM credenciais WHERE email = ?";
@@ -123,15 +125,12 @@ public class FormController {
             senhaValida = true;
         }
 
-
-        if(emailRegistrado && senhaValida) {
-            return "redirect:http://localhost:3000/home";
-        }
-
-        return "redirect:http://localhost:3000/";
+        Map<String, Object> response = new HashMap<>();
+        response.put("emailRegistrado", emailRegistrado);
+        response.put("senhaValida", senhaValida);
 
 
-
+        return ResponseEntity.ok(response);
 
     }
 
