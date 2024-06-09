@@ -129,6 +129,17 @@ public class FormController {
         response.put("emailRegistrado", emailRegistrado);
         response.put("senhaValida", senhaValida);
 
+        if (emailRegistrado && senhaValida) {
+            String sqlUsuario = "SELECT usuario FROM credenciais WHERE email = ? LIMIT 1";
+            String usuario = jdbcTemplate.queryForObject(sqlUsuario, String.class, email);
+
+            String sqlHashtag = "SELECT hashtag FROM credenciais WHERE email = ? LIMIT 1";
+            String hashtag = jdbcTemplate.queryForObject(sqlHashtag, String.class, email);
+
+            response.put("usuarioRegistrado", usuario);
+            response.put("hashtagRegistrada", hashtag);
+        }
+
 
         return ResponseEntity.ok(response);
 
